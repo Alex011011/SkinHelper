@@ -6,7 +6,8 @@
         <script src="script.js" type="text/javascript"></script>
     </head>
     <body onload="load()">
-        <input type="file" id="imageLoader" name="imageLoader"/>
+        <input type="file" id="imageLoader" multiple
+            accept="image/png, image/jpeg" name="imageLoader"/>
         <canvas id="imageCanvas"></canvas>
         <a id="download" download="skin.png">
             <button type="button" onclick="downloadImg()">Download</button>
