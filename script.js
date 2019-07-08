@@ -9,36 +9,38 @@ function load() {
 
 function handleImage(e) {
     const files = e.currentTarget.files;
+    var x = 0, y = 0;
     Object.keys(files).forEach(i => {
         const file = files[i];
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = (event) => {
             // TODO canvas size management and image processing
             console.log(file.name);
+            var img = new Image()
+            img.src = event.target.result;
+            img.onload = () => {
+                ctx.drawImage(img, 
+                    x == 0 ? x++ : x++ * 64 + 10, 
+                    y == 0 ? 0   : y * 64 + 10
+                );
+
+                if (x % 5 == 0) {
+                    x = 0;
+                    y++;
+                }
+                // canvas.width = x * 64 + 10;
+                // canvas.height = y * 64 + 10;
+                // convertImage();
+            }
         }
-        reader.readAsBinaryString(file);
+        reader.readAsDataURL(file);
     });
-
-    // var reader = new FileReader();
-    // reader.onload = function(event) {
-    //     var img = new Image();
-    //     img.onload = function() {
-    //         canvas.width = img.width;
-    //         canvas.height = img.height;
-    //         ctx.drawImage(img, 0, 0);
-
-    //         convertImage();
-    //     }
-
-    //     img.src = event.target.result;
-    // }
-    // reader.readAsDataURL(e.target.files[0]);
 }
 
 function convertImage() {
     //blank data
     var temp = ctx.getImageData(46, 52, 2, 12);
-
+    
     for (i = 0; i < temp.data.length; i++) {
         temp.data[i] = 0;
     }
