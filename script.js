@@ -14,19 +14,19 @@ function handleImage(e) {
         img.onload = function() {
             canvas.width = img.width;
             canvas.height = img.height;
-            ctx.drawImage(img,0,0);
+            ctx.drawImage(img, 0, 0);
 
             convertImage();
         }
 
         img.src = event.target.result;
     }
-    reader.readAsDataURL(e.target.files[0]);     
+    reader.readAsDataURL(e.target.files[0]);
 }
 
 function convertImage() {
     //blank data
-    temp = ctx.getImageData(46,52,2,12);
+    temp = ctx.getImageData(46, 52, 2, 12);
 
     for (i = 0; i < temp.data.length; i++) {
         temp.data[i] = 0;
