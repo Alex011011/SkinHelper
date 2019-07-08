@@ -1,8 +1,8 @@
 var ctx;
-function onload() {
+function load() {
     var imageLoader = document.getElementById('imageLoader');
     imageLoader.addEventListener('change', handleImage, false);
-
+    
     var canvas = document.getElementById('imageCanvas');
     ctx = canvas.getContext('2d');
 }
@@ -27,7 +27,7 @@ function handleImage(e) {
 function convertImage() {
     //blank data
     temp = ctx.getImageData(46,52,2,12);
-    
+
     for (i = 0; i < temp.data.length; i++) {
         temp.data[i] = 0;
     }
