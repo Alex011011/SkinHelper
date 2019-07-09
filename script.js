@@ -47,7 +47,7 @@ function handleImage(e) {
                         (y == 0 ? 0   : y   * 64) + 10
                     );
                     // Build the main canvas in rows of five
-                    if (x % 5 == 0) {
+                    if (x % 10 == 0) {
                         x = 0, y++;
                         redraw();
                     }
