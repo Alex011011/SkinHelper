@@ -10,46 +10,59 @@ function load() {
 // Read and convert skins
 var skins = [];
 function handleImage(e) {
-    const files = e.currentTarget.files;
+    const files   = e.currentTarget.files;
     var x = 0,  y = 0;
     canvas.height = 64;
     // Loop over all selected files
     Object.keys(files).forEach(i => {
-        const file   = files[i];
-        const reader = new FileReader();
-        // Process files once the reader is loaded
-        reader.onload = (event) => {
-            var img = new Image()
-            img.src = event.target.result;
-            img.onload = () => {
-                // Compartmentalize each skin into it's own canvas
-                var skin    = document.createElement('canvas');
-                var skinCtx = skin.getContext('2d');
-                // Draw the skin into the canvas, then convert and store it
-                skinCtx.drawImage(img, 0, 0);
-                convertImage(skinCtx);
-                skins.push(skin);
-                // Draw the converted image into the webpage in a grid-like fashion
-                ctx.drawImage(skin,
-                    (x == 0 ? x++ : x++ * 64) + 10, 
-                    (y == 0 ? 0   : y   * 64) + 10
-                );
-                // Build the main canvas in rows of five
-                if (x % 5 == 0) {
-                    x = 0, y++;
-                    redraw();
+        const file = files[i];
+        const ext  = file.name.split(".")[1];
+        // Alert the user if the file is not an image
+        if (["png", "jpg", "jpeg"].find(ex => ex == ext) == undefined) {
+            alert(`File ${file.name} is not an image!`);
+        } 
+        // Process image
+        else {
+            const reader = new FileReader();
+            // Process files once the reader is loaded
+            reader.onload = (event) => {
+                var img = new Image()
+                img.src = event.target.result;
+                img.onload = () => {
+                    // Make sure the image is exactly 64 by 64 pixels
+                    if (img.height != 64 || img.width != 64) {
+                        alert('Images MUST be exactly 64x64!')
+                        return;
+                    }
+                    // Compartmentalize each skin into it's own canvas
+                    var skin    = document.createElement('canvas');
+                    var skinCtx = skin.getContext('2d');
+                    // Draw the skin into the canvas, then convert and store it
+                    skinCtx.drawImage(img, 0, 0);
+                    convertImage(skinCtx);
+                    skins.push(skin);
+                    // Draw the converted image into the webpage in a grid-like fashion
+                    ctx.drawImage(skin,
+                        (x == 0 ? x++ : x++ * 64) + 10, 
+                        (y == 0 ? 0   : y   * 64) + 10
+                    );
+                    // Build the main canvas in rows of five
+                    if (x % 5 == 0) {
+                        x = 0, y++;
+                        redraw();
+                    }
                 }
             }
+            // Start reading the input data
+            reader.readAsDataURL(file);
         }
-        // Start reading the input data
-        reader.readAsDataURL(file);
     });
 }
 
 function convertImage(context) {
     // Blank data
     var temp = context.getImageData(46, 52, 2, 12);
-    
+
     for (i = 0; i < temp.data.length; i++) {
         temp.data[i] = 0;
     }
@@ -83,11 +96,15 @@ function redraw() {
     ctx.drawImage(canv, 0, 0);
 }
 
+// Download the converted image(s)
+var output;
 function downloadImg() {
-    var download = document.getElementById("download");
-    var image = document.getElementById("imageCanvas").toDataURL("image/png")
-            .replace("image/png", "image/octet-stream");
+    // TODO Download the image, or if more than one is used; zip all and download that. 
+    console.log(skins)
+    // var download = document.getElementById("download");
+    // var image    = document.getElementById("imageCanvas")
+    //         .toDataURL("image/png").replace("image/png", "image/octet-stream");
     
-    download.setAttribute("href", image);
+    // download.setAttribute("href", image);
     //download.setAttribute("download","archive.png");
 }
