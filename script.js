@@ -1,8 +1,9 @@
 var canvas, ctx;
+var canv = document.createElement('canvas');
+
 function load() {
     var imageLoader = document.getElementById('imageLoader');
     imageLoader.addEventListener('change', handleImage, false);
-    
     canvas = document.getElementById('imageCanvas');
     ctx = canvas.getContext('2d');
 }
@@ -10,34 +11,33 @@ function load() {
 function handleImage(e) {
     const files = e.currentTarget.files;
     var x = 0, y = 0;
+    canvas.height = 64;
     Object.keys(files).forEach(i => {
         const file = files[i];
         const reader = new FileReader();
         reader.onload = (event) => {
             // TODO canvas size management and image processing
-            console.log(file.name);
             var img = new Image()
             img.src = event.target.result;
             img.onload = () => {
                 ctx.drawImage(img, 
-                    x == 0 ? x++ : x++ * 64 + 10, 
-                    y == 0 ? 0   : y * 64 + 10
+                    (x == 0 ? x++ : x++ * 64) + 10, 
+                    (y == 0 ? 0   : y   * 64) + 10
                 );
 
                 if (x % 5 == 0) {
                     x = 0;
                     y++;
+                    redraw();
                 }
-                // canvas.width = x * 64 + 10;
-                // canvas.height = y * 64 + 10;
-                // convertImage();
+                convertImage(x, y);
             }
         }
         reader.readAsDataURL(file);
     });
 }
 
-function convertImage() {
+function convertImage(offsetX, offsetY) {
     //blank data
     var temp = ctx.getImageData(46, 52, 2, 12);
     
@@ -68,4 +68,12 @@ function downloadImg() {
     
     download.setAttribute("href", image);
     //download.setAttribute("download","archive.png");
+}
+
+function redraw() {
+    canv.width = canvas.width;
+    canv.height = canvas.height;
+    canv.getContext('2d').drawImage(canvas, 0, 0);
+    canvas.height += 74;
+    ctx.drawImage(canv, 0, 0);
 }
