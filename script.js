@@ -36,17 +36,19 @@ function handleImage(e) {
                     }
                     // Compartmentalize each skin into it's own canvas
                     var skin    = document.createElement('canvas');
+                    skin.width = 64, skin.height = 64;
                     var skinCtx = skin.getContext('2d');
                     // Draw the skin into the canvas, then convert and store it
                     skinCtx.drawImage(img, 0, 0);
                     convertImage(skinCtx);
+                    skin.name = file.name;
                     skins.push(skin);
                     // Draw the converted image into the webpage in a grid-like fashion
                     ctx.drawImage(skin,
                         (x == 0 ? x++ : x++ * 64) + 10, 
                         (y == 0 ? 0   : y   * 64) + 10
                     );
-                    // Build the main canvas in rows of five
+                    // Build the main canvas in rows of ten
                     if (x % 10 == 0) {
                         x = 0, y++;
                         redraw();
@@ -97,14 +99,25 @@ function redraw() {
 }
 
 // Download the converted image(s)
-var output;
 function downloadImg() {
-    // TODO Download the image, or if more than one is used; zip all and download that. 
-    console.log(skins)
-    // var download = document.getElementById("download");
-    // var image    = document.getElementById("imageCanvas")
-    //         .toDataURL("image/png").replace("image/png", "image/octet-stream");
-    
-    // download.setAttribute("href", image);
-    //download.setAttribute("download","archive.png");
+    var download = document.getElementById("download");
+    // Download a single skin
+    if (skins.length == 1) {
+        var image = document.getElementById("imageCanvas")
+                .toDataURL("image/png")
+                .replace("image/png", "image/octet-stream");
+        download.setAttribute("href", image);
+        return;
+    }
+    // Store each skin as a seperate file in a zip
+    var zip = new JSZip();
+    skins.forEach(skin => {
+        // Strip the data out of the URL
+        var data = skin.toDataURL().replace("data:image/png;base64,", "");
+        zip.file(skin.name, data, {base64: true});
+    });
+    // Generate a zip file
+    zip.generateAsync({type: "blob"}).then(function(content) {
+        saveAs(content, "skins.zip");
+    });
 }
