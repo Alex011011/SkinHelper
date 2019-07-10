@@ -8,11 +8,12 @@ function load() {
 }
 
 // Read and convert skins
-var skins = [];
+var skins;
 function handleImage(e) {
     const files   = e.currentTarget.files;
     var x = 0,  y = 0;
     canvas.height = 64;
+    skins         = [];
     // Loop over all selected files
     Object.keys(files).forEach(i => {
         const file = files[i];
